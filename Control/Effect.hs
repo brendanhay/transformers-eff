@@ -67,11 +67,11 @@ translate step (Eff go) =
 class (IsEff m, Monad m) => Interprets p m | m -> p where
   interpret :: p a -> m a
 
-instance {-# OVERLAPPABLE #-} Monad m => Interprets f (Eff f m) where
+instance {-# OVERLAPS #-} (Monad m, f ~ g) => Interprets f (Eff g m) where
   interpret p = Eff (\i -> i (InL p))
   {-# INLINE interpret #-}
 
-instance {-# OVERLAPS #-} (Monad m, Interprets f (Eff h m)) => Interprets f (Eff g (Eff h m)) where
+instance {-# OVERLAPPING #-} (Monad m, Interprets f (Eff h m)) => Interprets f (Eff g (Eff h m)) where
   interpret = lift . interpret
   {-# INLINE interpret #-}
 
